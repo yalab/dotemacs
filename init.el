@@ -51,6 +51,19 @@
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(flycheck migemo)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
 (if (string= system-type "darwin")
   (progn (add-to-list 'exec-path "/opt/homebrew/bin")
          (setq ns-command-modifier (quote meta))))
@@ -66,15 +79,5 @@
 (setq migemo-regex-dictionary nil)
 (load-library "migemo")
 (migemo-init)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(migemo)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+(require 'flycheck)
