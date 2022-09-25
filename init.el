@@ -44,3 +44,37 @@
           (font-spec :family font-family))
 ))
 
+; package
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+
+(if (string= system-type "darwin")
+  (progn (add-to-list 'exec-path "/opt/homebrew/bin")
+         (setq ns-command-modifier (quote meta))))
+
+(setq migemo-command "cmigemo")
+(setq migemo-options '("-q" "--emacs" "-i" "\g"))
+(cond ((string= system-type "darwin")
+       (setq migemo-dictionary "/opt/homebrew/Cellar/cmigemo/20110227/share/migemo/utf-8/migemo-dict"))
+      (t
+       (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")))
+(setq migemo-coding-system 'utf-8-unix)
+(setq migemo-user-dictionary nil)
+(setq migemo-regex-dictionary nil)
+(load-library "migemo")
+(migemo-init)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(migemo)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
