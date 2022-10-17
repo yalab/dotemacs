@@ -56,7 +56,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(nyan-mode flycheck migemo)))
+ '(package-selected-packages '(counsel nyan-mode flycheck migemo)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -85,3 +85,9 @@
 (require 'nyan-mode)
 (nyan-mode)
 (nyan-start-animation)
+
+(require 'ivy)
+(ivy-mode t)
+(global-set-key (kbd "M-;") 'counsel-ibuffer)
+(global-set-key (kbd "M-'") 'counsel-git-grep)
+(add-to-list 'ivy-more-chars-alist '(counsel-git-grep . 3))
