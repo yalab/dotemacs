@@ -56,7 +56,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(counsel nyan-mode flycheck migemo)))
+ '(package-selected-packages
+   '(lsp-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -83,8 +84,15 @@
 (require 'flycheck)
 (add-hook 'ruby-mode-hook
           '(lambda ()
-             (setq flycheck-checker 'ruby-rubocop)
-             (flycheck-mode 1)))
+             (setq flycheck-checker 'ruby-rubocop)))
+(add-hook 'typescript-mode-hook
+          '(lambda ()
+             (setq flycheck-checker 'javascript-eslint)))
+(flycheck-mode 1)
+
+
+;(with-eval-after-load 'flycheck
+;  (flycheck-add-mode 'javascript-eslint 'typescript-mode)
 
 (require 'nyan-mode)
 (nyan-mode)
