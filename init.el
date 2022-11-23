@@ -1,6 +1,7 @@
 (setq inhibit-startup-message t)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
+(setq indent-tabs-mode nil)
 
 (if window-system
   (progn (tool-bar-mode -1)
@@ -102,3 +103,11 @@
 (global-set-key (kbd "M-;") 'counsel-ibuffer)
 (global-set-key (kbd "M-'") 'counsel-git-grep)
 (add-to-list 'ivy-more-chars-alist '(counsel-git-grep . 3))
+
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'"   . js2-mode)
+	                      '("\\.json\\'" . js2-mode))
+(add-hook 'js2-mode-hook
+          (lambda ()
+             (setq js2-basic-offset 2)
+             (setq js-switch-indent-offset 2)))
