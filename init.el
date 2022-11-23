@@ -36,13 +36,12 @@
          (set-cursor-color "Gray")
          (set-frame-parameter nil 'alpha 90)
          (setq default-frame-alist (append (list '(width . 95)
-                                          '(height . 30))
-                                    default-frame-alist))
+						 '(height . 30))
+					   default-frame-alist))
          (set-face-attribute 'default nil :family font-family :height 140)
          (set-fontset-font
           nil 'japanese-jisx0208
-          (font-spec :family font-family))
-))
+          (font-spec :family font-family))))
 
 ; package
 (require 'package)
