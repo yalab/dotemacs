@@ -111,3 +111,8 @@
           (lambda ()
              (setq js2-basic-offset 2)
              (setq js-switch-indent-offset 2)))
+
+(global-set-key "\C-ci"
+  (lambda () (interactive) (indent-rigidly (region-beginning) (region-end)  2)))
+(global-set-key "\C-cu"
+  (lambda () (interactive) (indent-rigidly (region-beginning) (region-end) -2)))
