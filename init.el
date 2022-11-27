@@ -61,7 +61,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(js2-mode yaml-mode rbs-mode lsp-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
+   '(web-mode js2-mode yaml-mode rbs-mode lsp-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -117,6 +117,13 @@
           (lambda ()
              (setq js2-basic-offset 2)
              (setq js-switch-indent-offset 2)))
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-hook 'web-mode-hook
+	  (lambda ()
+	    (setq web-mode-enable-auto-pairing nil)
+	    (set-face-attribute 'web-mode-html-tag-face nil :foreground "#6699ff")))
 
 (global-set-key "\C-ci"
   (lambda () (interactive) (indent-rigidly (region-beginning) (region-end)  2)))
