@@ -147,13 +147,11 @@
               ("C-c C-c d" . dap-hydra)
               ("C-c C-c h" . lsp-ui-doc-glance))
   :config
-  (add-hook 'rustic-mode-hook 'rust-format-buffer))
-
-(defun rust-format-buffer ()
-  (when buffer-file-name
-    (setq-local buffer-save-without-query t))
+  (add-hook 'rustic-mode-hook (lambda ()
+    (when buffer-file-name
+      (setq-local buffer-save-without-query t))
   (set-frame-height (selected-frame) 50)
-  (add-hook 'before-save-hook 'lsp-format-buffer nil t))
+  (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
 (add-to-list 'display-buffer-alist
              '("*cargo\\.*"
