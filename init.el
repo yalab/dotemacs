@@ -40,8 +40,8 @@
              (set-foreground-color "LightGray")
              (set-cursor-color "Gray")
              (set-frame-parameter nil 'alpha 90)
-             (setq default-frame-alist (append (list '(width . 120)
-						     '(height . 50))
+             (setq default-frame-alist (append (list '(width . 95)
+						     '(height . 30))
 					       default-frame-alist))
              (set-face-attribute 'default nil :family font-family :height 140)
              (set-fontset-font
@@ -152,6 +152,7 @@
 (defun rust-format-buffer ()
   (when buffer-file-name
     (setq-local buffer-save-without-query t))
+  (set-frame-height (selected-frame) 50)
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
 (add-to-list 'display-buffer-alist
