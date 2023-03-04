@@ -40,8 +40,8 @@
              (set-foreground-color "LightGray")
              (set-cursor-color "Gray")
              (set-frame-parameter nil 'alpha 90)
-             (setq default-frame-alist (append (list '(width . 95)
-						     '(height . 30))
+             (setq default-frame-alist (append (list '(width . 120)
+						     '(height . 50))
 					       default-frame-alist))
              (set-face-attribute 'default nil :family font-family :height 140)
              (set-fontset-font
@@ -153,6 +153,13 @@
   (when buffer-file-name
     (setq-local buffer-save-without-query t))
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
+
+(add-to-list 'display-buffer-alist
+             '("*cargo\\.*"
+               (display-buffer-reuse-window
+		display-buffer-in-side-window)
+               (side . bottom)
+               (window-height . 0.3)))
 
 (use-package lsp-mode
   :ensure
