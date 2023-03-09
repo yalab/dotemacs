@@ -145,7 +145,8 @@
               ("C-c C-c s" . lsp-rust-analyzer-status)
               ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
               ("C-c C-c d" . dap-hydra)
-              ("C-c C-c h" . lsp-ui-doc-glance))
+              ("C-c C-c h" . lsp-ui-doc-glance)
+              ("C-c C-t"   . (lambda () (save-buffer) (rustic-cargo-test-run))))
   :config
   (add-hook 'rustic-mode-hook (lambda ()
     (when buffer-file-name
