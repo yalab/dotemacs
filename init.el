@@ -145,8 +145,7 @@
               ("C-c C-c s" . lsp-rust-analyzer-status)
               ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
               ("C-c C-c d" . dap-hydra)
-              ("C-c C-c h" . lsp-ui-doc-glance)
-              ("C-c C-t"   . (lambda () (save-buffer) (rustic-cargo-test-run))))
+              ("C-c C-c h" . lsp-ui-doc-glance))
   :config
   (add-hook 'rustic-mode-hook (lambda ()
     (when buffer-file-name
@@ -160,6 +159,7 @@
 		display-buffer-in-side-window)
                (side . bottom)
                (window-height . 0.3)))
+(setq rustic-test-arguments '("--" "--nocapture"))
 
 (use-package lsp-mode
   :ensure
@@ -192,20 +192,10 @@
   :ensure
   :init (exec-path-from-shell-initialize))
 
-(when (executable-find "lldb-mi")
-  (use-package dap-mode
-    :ensure
-    :config
-    (dap-ui-mode)
-    (dap-ui-controls-mode 1)
 
-    (require 'dap-lldb)
-    (require 'dap-gdb-lldb)
-    (dap-gdb-lldb-setup)
-    (dap-register-debug-template
-     "Rust::LLDB Run Configuration"
-     (list :type "lldb"
-           :request "launch"
-           :name "LLDB::Run"
-	   :gdbpath "rust-lldb"
-           ))))
+(require 'dap-mode)
+(require 'dap-lldb)
+(add-hook 'rust-mode-hook #'dap-mode)
+(setq dap-lldb-debug-program '("/opt/homebrew/opt/llvm/bin/lldb-vscode"))
+(setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
+(setq dap-auto-configure-features '(sessions locals controls tooltip))
