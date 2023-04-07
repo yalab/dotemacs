@@ -61,7 +61,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(slim-mode dockerfile-mode exec-path-from-shell toml-mode rust-playground lsp-ui rustic use-package web-mode js2-mode yaml-mode rbs-mode lsp-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
+   '(s dash editorconfig slim-mode dockerfile-mode exec-path-from-shell toml-mode rust-playground lsp-ui rustic use-package web-mode js2-mode yaml-mode rbs-mode lsp-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -199,3 +199,14 @@
 (setq dap-lldb-debug-program '("/opt/homebrew/opt/llvm/bin/lldb-vscode"))
 (setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
 (setq dap-auto-configure-features '(sessions locals controls tooltip))
+
+(add-to-list 'load-path "~/.emacs.d/github/copilot.el"); https://github.com/zerolfx/copilot.el
+(require 'copilot)
+(add-hook 'prog-mode-hook 'copilot-mode)
+
+(with-eval-after-load 'company
+  ;; disable inline previews
+  (delq 'company-preview-if-just-one-frontend company-frontends))
+  
+(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
