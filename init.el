@@ -154,7 +154,7 @@
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
 (add-to-list 'display-buffer-alist
-             '("*cargo\\.*"
+             '("*(cargo|test)\\.*"
                (display-buffer-reuse-window
 		display-buffer-in-side-window)
                (side . bottom)
