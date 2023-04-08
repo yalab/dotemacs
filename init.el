@@ -196,7 +196,7 @@
 (require 'dap-mode)
 (require 'dap-lldb)
 (add-hook 'rust-mode-hook #'dap-mode)
-(setq dap-lldb-debug-program '("/opt/homebrew/opt/llvm/bin/lldb-vscode"))
+(setq dap-lldb-debug-program '("~/vendor/llvm-project/build/Release/bin/lldb-vscode"))
 (setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
 (setq dap-auto-configure-features '(sessions locals controls tooltip))
 
