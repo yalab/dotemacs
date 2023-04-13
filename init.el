@@ -150,7 +150,6 @@
   (add-hook 'rustic-mode-hook (lambda ()
     (when buffer-file-name
       (setq-local buffer-save-without-query t))
-  (set-frame-height (selected-frame) 50)
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
 (add-to-list 'display-buffer-alist
@@ -242,6 +241,9 @@
 (setq dap-lldb-debug-program '("~/vendor/llvm-project/build/Release/bin/lldb-vscode"))
 (setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
 (setq dap-auto-configure-features '(sessions locals controls tooltip))
+(add-hook 'dap-session-changed-hook '(lambda ()
+				      (when (dap--session-running (dap--cur-session))
+					(set-frame-size (selected-frame) 120 50))))
 
 (add-to-list 'load-path "~/.emacs.d/github/copilot.el"); https://github.com/zerolfx/copilot.el
 (require 'copilot)
