@@ -150,10 +150,11 @@
   (add-hook 'rustic-mode-hook (lambda ()
     (when buffer-file-name
       (setq-local buffer-save-without-query t))
-  (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
+    (set-frame-height (selected-frame) 50)
+    (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
 (add-to-list 'display-buffer-alist
-             '("*(cargo|test)\\.*"
+             '("*\\(test\\|cargo\\|rust\\).*"
                (display-buffer-reuse-window
 		display-buffer-in-side-window)
                (side . bottom)
