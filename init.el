@@ -96,6 +96,10 @@
              (setq flycheck-checker 'javascript-eslint)))
 (flycheck-mode 1)
 
+(add-hook 'typescript-mode-hook
+          (lambda ()
+            (setq typescript-indent-level 2)))
+
 
 ;(with-eval-after-load 'flycheck
 ;  (flycheck-add-mode 'javascript-eslint 'typescript-mode)
