@@ -61,7 +61,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(s editorconfig slim-mode dockerfile-mode exec-path-from-shell toml-mode rust-playground lsp-ui rustic use-package web-mode js2-mode yaml-mode rbs-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
+   '(eglot s editorconfig slim-mode dockerfile-mode exec-path-from-shell toml-mode rust-playground lsp-ui rustic use-package web-mode js2-mode yaml-mode rbs-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -195,60 +195,6 @@
 (use-package exec-path-from-shell
   :ensure
   :init (exec-path-from-shell-initialize))
-
-(require 'lsp-rust)
-(defun lsp-rust-analyzer-debug (runnable)
-  "Select and debug a RUNNABLE action."
-  (interactive (list (lsp-rust-analyzer--select-runnable)))
-  (unless (featurep 'dap-lldb)
-    (user-error "You must require `dap-lldb'"))
-  (-let (((&rust-analyzer:Runnable
-           :args (&rust-analyzer:RunnableArgs :cargo-args :workspace-root? :executable-args)
-           :label) runnable))
-    (pcase (aref cargo-args 0)
-      ("run" (aset cargo-args 0 "build"))
-      ("test" (when (-contains? (append cargo-args ()) "--no-run")
-                (cl-callf append cargo-args (list "--no-run" "")))))
-    (->> (append (list (executable-find "cargo"))
-                 cargo-args
-                 (list "--message-format=json"))
-         (s-join " ")
-         (shell-command-to-string)
-         (s-lines)
-         (-keep (lambda (s)
-                  (condition-case nil
-                      (-let* ((json-object-type 'plist)
-                              ((msg &as &plist :reason :executable :target) (json-read-from-string s)))
-                        (when (and executable
-                                   (string= "compiler-artifact" reason)
-                                   (string= "test" (aref (plist-get target :kind) 0)))
-                          executable))
-                    (error))))
-         (print)
-         (funcall
-          (lambda (artifact-spec)
-            (pcase artifact-spec
-              (`() (user-error "No compilation artifacts or obtaining the runnable artifacts failed"))
-              (`(,spec) spec)
-              (_ (user-error "Multiple compilation artifacts are not supported")))))
-         (list :type "lldb-vscode"
-               :request "launch"
-               :name label
-               :args executable-args
-               :cwd workspace-root?
-               :program)
-         (dap-debug))))
-
-
-(require 'dap-mode)
-(require 'dap-lldb)
-(add-hook 'rust-mode-hook #'dap-mode)
-(setq dap-lldb-debug-program '("~/vendor/llvm-project/build/Release/bin/lldb-vscode"))
-(setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
-(setq dap-auto-configure-features '(sessions locals controls tooltip))
-(add-hook 'dap-session-changed-hook '(lambda ()
-				      (when (dap--session-running (dap--cur-session))
-					(set-frame-size (selected-frame) 120 50))))
 
 (add-to-list 'load-path "~/.emacs.d/github/copilot.el"); https://github.com/zerolfx/copilot.el
 (require 'copilot)
