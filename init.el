@@ -40,7 +40,7 @@
              (set-foreground-color "LightGray")
              (set-cursor-color "Gray")
              (set-frame-parameter nil 'alpha 90)
-             (setq default-frame-alist (append (list '(width . 95)
+             (setq default-frame-alist (append (list '(width . 120)
 						     '(height . 30))
 					       default-frame-alist))
              (set-face-attribute 'default nil :family font-family :height 140)
@@ -61,7 +61,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(s editorconfig slim-mode dockerfile-mode exec-path-from-shell toml-mode rust-playground lsp-ui rustic use-package web-mode js2-mode yaml-mode rbs-mode elm-mode typescript-mode counsel nyan-mode flycheck migemo)))
+   '(claude-code counsel dockerfile-mode editorconfig eglot elm-mode
+		 exec-path-from-shell flycheck gnu-elpa-keyring-update
+		 js2-mode lsp-ui migemo nyan-mode rbs-mode
+		 rust-playground rustic s slim-mode toml-mode
+		 typescript-mode use-package vue-mode web-mode
+		 yaml-mode))
+ '(package-vc-selected-packages
+   '((claude-code :url "https://github.com/stevemolitor/claude-code.el")))
+ '(warning-suppress-log-types '(((unlock-file)) ((unlock-file))))
+ '(warning-suppress-types '(((unlock-file)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -87,13 +96,16 @@
   (load-library "migemo")
   (migemo-init))
 
+(add-to-list 'auto-mode-alist '("Steepfile" . ruby-mode))
+
 (require 'flycheck)
 (add-hook 'ruby-mode-hook
           #'(lambda ()
              (setq flycheck-checker 'ruby-rubocop)))
 (add-hook 'typescript-mode-hook
           #'(lambda ()
-             (setq flycheck-checker 'javascript-eslint)))
+             (setq flycheck-checker 'javascript-eslint)
+	     (setq indent-tabs-mode nil)))
 (flycheck-mode 1)
 
 
@@ -125,6 +137,10 @@
 	    (setq web-mode-enable-auto-pairing nil)
 	    (set-face-attribute 'web-mode-html-tag-face nil :foreground "#6699ff")))
 
+(add-hook 'typescript-mode-hook
+          (lambda ()
+	    (setq typescript-indent-level 2)))
+
 (global-set-key "\C-ci"
   (lambda () (interactive) (indent-rigidly (region-beginning) (region-end)  2)))
 (global-set-key "\C-cu"
@@ -132,119 +148,119 @@
 
 ;;; init.el ends here
 
-(use-package rustic
-  :ensure
-  :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status)
-              ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
-              ("C-c C-c d" . dap-hydra)
-              ("C-c C-c h" . lsp-ui-doc-glance))
-  :config
-  (add-hook 'rustic-mode-hook (lambda ()
-    (when buffer-file-name
-      (setq-local buffer-save-without-query t))
-    (set-frame-height (selected-frame) 50)
-    (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
+;; (use-package rustic
+;;   :ensure
+;;   :bind (:map rustic-mode-map
+;;               ("M-j" . lsp-ui-imenu)
+;;               ("M-?" . lsp-find-references)
+;;               ("C-c C-c l" . flycheck-list-errors)
+;;               ("C-c C-c a" . lsp-execute-code-action)
+;;               ("C-c C-c r" . lsp-rename)
+;;               ("C-c C-c q" . lsp-workspace-restart)
+;;               ("C-c C-c Q" . lsp-workspace-shutdown)
+;;               ("C-c C-c s" . lsp-rust-analyzer-status)
+;;               ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+;;               ("C-c C-c d" . dap-hydra)
+;;               ("C-c C-c h" . lsp-ui-doc-glance))
+;;   :config
+;;   (add-hook 'rustic-mode-hook (lambda ()
+;;     (when buffer-file-name
+;;       (setq-local buffer-save-without-query t))
+;;     (set-frame-height (selected-frame) 50)
+;;     (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
-(add-to-list 'display-buffer-alist
-             '("*\\(test\\|cargo\\|rust\\).*"
-               (display-buffer-reuse-window
-		display-buffer-in-side-window)
-               (side . bottom)
-               (window-height . 0.3)))
-(setq rustic-test-arguments '("--" "--nocapture"))
+;; (add-to-list 'display-buffer-alist
+;;              '("*\\(test\\|cargo\\|rust\\).*"
+;;                (display-buffer-reuse-window
+;; 		display-buffer-in-side-window)
+;;                (side . bottom)
+;;                (window-height . 0.3)))
+;; (setq rustic-test-arguments '("--" "--nocapture"))
 
-(use-package lsp-mode
-  :ensure
-  :commands lsp
-  :custom
-  (lsp-rust-analyzer-cargo-watch-command "clippy")
-  (lsp-eldoc-render-all t)
-  (lsp-idle-delay 0.6)
-  (lsp-rust-analyzer-server-display-inlay-hints t)
-  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
-  (lsp-rust-analyzer-display-chaining-hints t)
-  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
-  (lsp-rust-analyzer-display-closure-return-type-hints t)
-  (lsp-rust-analyzer-display-parameter-hints nil)
-  (lsp-rust-analyzer-display-reborrow-hints nil)
-  :config
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+;; (use-package lsp-mode
+;;   :ensure
+;;   :commands lsp
+;;   :custom
+;;   (lsp-rust-analyzer-cargo-watch-command "clippy")
+;;   (lsp-eldoc-render-all t)
+;;   (lsp-idle-delay 0.6)
+;;   (lsp-rust-analyzer-server-display-inlay-hints t)
+;;   (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+;;   (lsp-rust-analyzer-display-chaining-hints t)
+;;   (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+;;   (lsp-rust-analyzer-display-closure-return-type-hints t)
+;;   (lsp-rust-analyzer-display-parameter-hints nil)
+;;   (lsp-rust-analyzer-display-reborrow-hints nil)
+;;   :config
+;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
-(use-package lsp-ui
-  :ensure
-  :commands lsp-ui-mode
-  :custom
-  (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-enable nil))
+;; (use-package lsp-ui
+;;   :ensure
+;;   :commands lsp-ui-mode
+;;   :custom
+;;   (lsp-ui-peek-always-show t)
+;;   (lsp-ui-sideline-show-hover t)
+;;   (lsp-ui-doc-enable nil))
 
-(use-package rust-playground :ensure)
-(use-package toml-mode :ensure)
-(use-package exec-path-from-shell
-  :ensure
-  :init (exec-path-from-shell-initialize))
+;; (use-package rust-playground :ensure)
+;; (use-package toml-mode :ensure)
+;; (use-package exec-path-from-shell
+;;   :ensure
+;;   :init (exec-path-from-shell-initialize))
 
-(require 'lsp-rust)
-(defun lsp-rust-analyzer-debug (runnable)
-  "Select and debug a RUNNABLE action."
-  (interactive (list (lsp-rust-analyzer--select-runnable)))
-  (unless (featurep 'dap-lldb)
-    (user-error "You must require `dap-lldb'"))
-  (-let (((&rust-analyzer:Runnable
-           :args (&rust-analyzer:RunnableArgs :cargo-args :workspace-root? :executable-args)
-           :label) runnable))
-    (pcase (aref cargo-args 0)
-      ("run" (aset cargo-args 0 "build"))
-      ("test" (when (-contains? (append cargo-args ()) "--no-run")
-                (cl-callf append cargo-args (list "--no-run" "")))))
-    (->> (append (list (executable-find "cargo"))
-                 cargo-args
-                 (list "--message-format=json"))
-         (s-join " ")
-         (shell-command-to-string)
-         (s-lines)
-         (-keep (lambda (s)
-                  (condition-case nil
-                      (-let* ((json-object-type 'plist)
-                              ((msg &as &plist :reason :executable :target) (json-read-from-string s)))
-                        (when (and executable
-                                   (string= "compiler-artifact" reason)
-                                   (string= "test" (aref (plist-get target :kind) 0)))
-                          executable))
-                    (error))))
-         (print)
-         (funcall
-          (lambda (artifact-spec)
-            (pcase artifact-spec
-              (`() (user-error "No compilation artifacts or obtaining the runnable artifacts failed"))
-              (`(,spec) spec)
-              (_ (user-error "Multiple compilation artifacts are not supported")))))
-         (list :type "lldb-vscode"
-               :request "launch"
-               :name label
-               :args executable-args
-               :cwd workspace-root?
-               :program)
-         (dap-debug))))
+;; ;; (require 'lsp-rust)
+;; ;; (defun lsp-rust-analyzer-debug (runnable)
+;; ;;   "Select and debug a RUNNABLE action."
+;; ;;   (interactive (list (lsp-rust-analyzer--select-runnable)))
+;; ;;   (unless (featurep 'dap-lldb)
+;; ;;     (user-error "You must require `dap-lldb'"))
+;; ;;   (-let (((&rust-analyzer:Runnable
+;; ;;            :args (&rust-analyzer:RunnableArgs :cargo-args :workspace-root? :executable-args)
+;; ;;            :label) runnable))
+;; ;;     (pcase (aref cargo-args 0)
+;; ;;       ("run" (aset cargo-args 0 "build"))
+;; ;;       ("test" (when (-contains? (append cargo-args ()) "--no-run")
+;; ;;                 (cl-callf append cargo-args (list "--no-run" "")))))
+;; ;;     (->> (append (list (executable-find "cargo"))
+;; ;;                  cargo-args
+;; ;;                  (list "--message-format=json"))
+;; ;;          (s-join " ")
+;; ;;          (shell-command-to-string)
+;; ;;          (s-lines)
+;; ;;          (-keep (lambda (s)
+;; ;;                   (condition-case nil
+;; ;;                       (-let* ((json-object-type 'plist)
+;; ;;                               ((msg &as &plist :reason :executable :target) (json-read-from-string s)))
+;; ;;                         (when (and executable
+;; ;;                                    (string= "compiler-artifact" reason)
+;; ;;                                    (string= "test" (aref (plist-get target :kind) 0)))
+;; ;;                           executable))
+;; ;;                     (error))))
+;; ;;          (print)
+;; ;;          (funcall
+;; ;;           (lambda (artifact-spec)
+;; ;;             (pcase artifact-spec
+;; ;;               (`() (user-error "No compilation artifacts or obtaining the runnable artifacts failed"))
+;; ;;               (`(,spec) spec)
+;; ;;               (_ (user-error "Multiple compilation artifacts are not supported")))))
+;; ;;          (list :type "lldb-vscode"
+;; ;;                :request "launch"
+;; ;;                :name label
+;; ;;                :args executable-args
+;; ;;                :cwd workspace-root?
+;; ;;                :program)
+;; ;;          (dap-debug))))
 
 
-(require 'dap-mode)
-(require 'dap-lldb)
-(add-hook 'rust-mode-hook #'dap-mode)
-(setq dap-lldb-debug-program '("~/vendor/llvm-project/build/Release/bin/lldb-vscode"))
-(setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
-(setq dap-auto-configure-features '(sessions locals controls tooltip))
-(add-hook 'dap-session-changed-hook '(lambda ()
-				      (when (dap--session-running (dap--cur-session))
-					(set-frame-size (selected-frame) 120 50))))
+;; (require 'dap-mode)
+;; (require 'dap-lldb)
+;; (add-hook 'rust-mode-hook #'dap-mode)
+;; (setq dap-lldb-debug-program '("~/vendor/llvm-project/build/Release/bin/lldb-vscode"))
+;; (setq dap-lldb-debugged-program-function (lambda () (let ((workspace-root (locate-dominating-file default-directory "Cargo.toml"))) (concat workspace-root "target/debug/assistant"))))
+;; (setq dap-auto-configure-features '(sessions locals controls tooltip))
+;; (add-hook 'dap-session-changed-hook '(lambda ()
+;; 				      (when (dap--session-running (dap--cur-session))
+;; 					(set-frame-size (selected-frame) 120 50))))
 
 (add-to-list 'load-path "~/.emacs.d/github/copilot.el"); https://github.com/zerolfx/copilot.el
 (require 'copilot)
@@ -256,3 +272,39 @@
   
 (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
 (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+
+(require 'claude-code)
+(global-set-key (kbd "C-c c") claude-code-command-map) ;; or your preferred key
+(claude-code-mode)
+(add-to-list 'display-buffer-alist
+             '("^\\*claude\\*"
+               (display-buffer-in-side-window)
+               (side . right)
+               (window-width . 0.33)))
+
+(defun ruby-arrow-hash-to-json-hash (start end)
+  "Convert Ruby hash with arrow syntax to JSON hash syntax in the selected region."
+  (interactive "r")
+  (save-restriction
+    (narrow-to-region start end)
+    (goto-char (point-min))
+    (while (re-search-forward "=>\\|:" nil t)
+      (replace-match (if (string= (match-string 0) "=>") ":" ""))))
+  (save-restriction
+    (narrow-to-region start end)
+    (goto-char (point-min))
+    (while (re-search-forward "'\\([^\']*\\)'" nil t)
+      (replace-match "\"\\1\"")))
+  (save-restriction
+    (narrow-to-region start end)
+    (goto-char (point-min))
+    (while (re-search-forward ":\\([a-zA-Z_][a-zA-Z0-9_]*\\) =>" nil t)
+      (replace-match "\"\\1\":"))))
+
+(global-set-key (kbd "C-c j") 'ruby-arrow-hash-to-json-hash)
+
+(add-hook 'vue-html-mode-hook (lambda ()
+				(setq indent-tabs-mode nil)))
+(add-hook 'html-mode-hook (lambda ()
+			    (setq indent-tabs-mode nil)))
+				

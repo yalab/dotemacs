@@ -4,3 +4,6 @@
 /.dap-breakpoints
 /github
 /dap-ui-repl-lldb-vscode-history
+/.cache/
+/projects
+/transient/
